@@ -35,7 +35,7 @@ const characters = {
 	shenwanglang: ["male", "shen", 4, ["relieren","tianbian","decadexianzhen","xinjyzongshi","hanzhan","tianyi","olqiaoshui","regushe", "rejici","zhuandui","jianzheng","rechuhai"]],
 	//天辩 陷阵 纵适 酣战 天义 乡害 鼓舌
 	shenshichangshi: ["male", "shen", 3, ["juejing","scstaoluan", "scschiyan", "scszimou", "scspicai", "scsyaozhuo", "scsxiaolu", "scskuiji", "scschihe", "scsniqu", "scsanruo"]],
-	shencaochong: ["male", "shen", 3, ["chengxiang","refankui", "new_reyiji", "huituo", "ganglie", "chouce", "tiandu", "new_rejianxiong", "rejieming", "refangzhu", "yuce"]],
+	shencaochong: ["male", "shen", 3, ["chengxiang","refankui", "new_reyiji", "huituo", "reganglie", "chouce", "tiandu", "new_rejianxiong", "rejieming", "refangzhu", "yuce"]],
 
 };
 
