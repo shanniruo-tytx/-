@@ -32,6 +32,11 @@ const characters = {
 
 	xf_yiji: ["male", "shu", 3, ["xinfu_jijie", "xinfu_jiyuan"], []],
 	re_yuanshu: ["male", "qun", 4, ["rewangzun", "retongji"]],
+	shenwanglang: ["male", "shen", 4, ["relieren","tianbian","decadexianzhen","xinjyzongshi","hanzhan","tianyi","olqiaoshui","regushe", "rejici","zhuandui","jianzheng","rechuhai"]],
+	//天辩 陷阵 纵适 酣战 天义 乡害 鼓舌
+	shenshichangshi: ["male", "shen", 3, ["juejing","scstaoluan", "scschiyan", "scszimou", "scspicai", "scsyaozhuo", "scsxiaolu", "scskuiji", "scschihe", "scsniqu", "scsanruo"]],
+	shencaochong: ["male", "shen", 3, ["chengxiang","refankui", "new_reyiji", "huituo", "ganglie", "chouce", "tiandu", "new_rejianxiong", "rejieming", "refangzhu", "yuce"]],
+
 };
 
 export default characters;

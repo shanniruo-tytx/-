@@ -1,4 +1,7 @@
 const translates = {
+	shenwanglang:"神王朗",
+	shenshichangshi:"神十常侍",
+	shencaochong:"神曹冲",
 	caocao: "曹操",
 	hujia: "护驾",
 	hujia_info: "主公技，当你需要使用或打出一张【闪】时，你可以令其他魏势力角色选择是否打出一张【闪】。若有角色响应，则你视为使用或打出了一张【闪】。",
