@@ -9414,6 +9414,248 @@ const skills = {
 			},
 		},
 	},
+	redunshi: {
+		audio: 2,
+		enable: ["chooseToUse", "chooseToRespond"],
+		usable: 1,
+		init: function (player, skill) {
+			if (!player.storage[skill]) player.storage[skill] = [["sha", "shan", "tao", "jiu"], 0];
+		},
+		hiddenCard: function (player, name) {
+			if (player.storage.redunshi && player.storage.redunshi[0].includes(name) && !player.getStat("skill").redunshi) return true;
+			return false;
+		},
+		marktext: "席",
+		mark: true,
+		intro: {
+			markcount: function (storage) {
+				return storage[1];
+			},
+			content: function (storage, player) {
+				if (!storage) return;
+				var str = "<li>";
+				if (!storage[0].length) {
+					str += "已无可用牌";
+				} else {
+					str += "剩余可用牌：";
+					str += get.translation(storage[0]);
+				}
+				str += "<br><li>“席”标记数量：";
+				str += storage[1];
+				return str;
+			},
+		},
+		filter: function (event, player) {
+			if (event.type == "wuxie") return false;
+			var storage = player.storage.redunshi;
+			if (!storage || !storage[0].length) return false;
+			for (var i of storage[0]) {
+				var card = { name: i, isCard: true };
+				if (event.filterCard(card, player, event)) return true;
+			}
+			return false;
+		},
+		chooseButton: {
+			dialog: function (event, player) {
+				var list = [];
+				var storage = player.storage.redunshi;
+				for (var i of storage[0]) list.push(["基本", "", i]);
+				return ui.create.dialog("遁世", [list, "vcard"], "hidden");
+			},
+			filter: function (button, player) {
+				var evt = _status.event.getParent();
+				return evt.filterCard({ name: button.link[2], isCard: true }, player, evt);
+			},
+			check: function (button) {
+				var card = { name: button.link[2] },
+					player = _status.event.player;
+				if (_status.event.getParent().type != "phase") return 1;
+				if (card.name == "jiu") return 0;
+				if (card.name == "sha" && player.hasSkill("jiu")) return 0;
+				return player.getUseValue(card, null, true);
+			},
+			backup: function (links, player) {
+				return {
+					audio: "redunshi",
+					filterCard: function () {
+						return false;
+					},
+					popname: true,
+					viewAs: {
+						name: links[0][2],
+						isCard: true,
+					},
+					selectCard: -1,
+					precontent: function () {
+						player.addTempSkill("redunshi_damage");
+						player.storage.redunshi_damage = event.result.card.name;
+					},
+				};
+			},
+			prompt: function (links, player) {
+				return "选择【" + get.translation(links[0][2]) + "】的目标";
+			},
+		},
+		ai: {
+			respondSha: true,
+			respondShan: true,
+			skillTagFilter: function (player, tag, arg) {
+				var storage = player.storage.redunshi;
+				if (!storage || !storage[0].length) return false;
+				if (player.getStat("skill").redunshi) return false;
+				switch (tag) {
+					case "respondSha":
+						return (_status.event.type != "phase" || player == game.me || player.isUnderControl() || player.isOnline()) && storage[0].includes("sha");
+					case "respondShan":
+						return storage[0].includes("shan");
+					case "save":
+						if (arg == player && storage[0].includes("jiu")) return true;
+						return storage[0].includes("tao");
+				}
+			},
+			order: 2,
+			result: {
+				player: function (player) {
+					if (_status.event.type == "dying") {
+						return get.attitude(player, _status.event.dying);
+					}
+					return 1;
+				},
+			},
+		},
+		initList: function () {
+			var list,
+				skills = [];
+			var banned = ["xunyi", "mbyilie"];
+			if (get.mode() == "guozhan") {
+				list = [];
+				for (var i in lib.characterPack.mode_guozhan) list.push(i);
+			} else if (_status.connectMode) list = get.charactersOL();
+			else {
+				list = [];
+				for (var i in lib.character) {
+					if (lib.filter.characterDisabled2(i) || lib.filter.characterDisabled(i)) continue;
+					list.push(i);
+				}
+			}
+			for (var i of list) {
+				if (i.indexOf("gz_jun") == 0) continue;
+				for (var j of lib.character[i][3]) {
+					var skill = lib.skill[j];
+					if (!skill || skill.zhuSkill || banned.includes(j)) continue;
+					if (skill.ai && (skill.ai.combo || skill.ai.notemp || skill.ai.neg)) continue;
+					var info = get.translation(j);
+					for (var ix = 0; ix < info.length; ix++) {
+						if (/仁|义|礼|智|信/.test(info[ix]) == true) {
+							skills.add(j);
+							break;
+						}
+					}
+				}
+			}
+			_status.redunshi_list = skills;
+		},
+		subSkill: {
+			backup: { audio: "redunshi" },
+			damage: {
+				audio: "redunshi",
+				trigger: { global: "damageBegin2" },
+				forced: true,
+				charlotte: true,
+				filter: function (event, player) {
+					return event.source == _status.currentPhase;
+				},
+				onremove: true,
+				logTarget: "source",
+				content: function () {
+					"step 0";
+					event.cardname = player.storage.redunshi_damage;
+					player.removeSkill("redunshi_damage");
+					event.target = trigger.source;
+					var card = get.translation(trigger.source),
+						card2 = get.translation(event.cardname),
+						card3 = get.translation(trigger.player);
+					var list = ["防止即将对" + card3 + "造成的伤害，并令" + card + "获得一个技能名中包含“仁/义/礼/智/信”的技能", "从〖遁世〗中删除【" + card2 + "】并获得一枚“席”", "减1点体力上限，然后摸等同于“席”数的牌"];
+					var next = player.chooseButton([
+						"遁世：请选择两项",
+						[
+							list.map((item, i) => {
+								return [i, item];
+							}),
+							"textbutton",
+						],
+					]);
+					next.set("forced", true);
+					next.set("selectButton", player == _status.currentPhase ? 2 : 1);
+					next.set("ai", function (button) {
+						var player = _status.event.player;
+						switch (button.link) {
+							case 0:
+								if (get.attitude(player, _status.currentPhase) > 0) return 3;
+								return 0;
+							case 1:
+								return 1;
+							case 2:
+								var num = player.storage.redunshi[1];
+								for (var i of ui.selected.buttons) {
+									if (i.link == 1) num++;
+								}
+								if (num > 0 && player.isDamaged()) return 2;
+								return 0;
+						}
+					});
+					"step 1";
+					event.links = result.links.sort();
+					for (var i of event.links) {
+						game.log(player, "选择了", "#g【遁世】", "的", "#y选项" + get.cnNumber(i + 1, true));
+					}
+					if (event.links.includes(0)) {
+						trigger.cancel();
+						if (!_status.redunshi_list) lib.skill.redunshi.initList();
+						var list = _status.redunshi_list
+							.filter(function (i) {
+								return !target.hasSkill(i, null, null, false);
+							})
+							.randomGets(3);
+						if (list.length == 0) event.goto(3);
+						else {
+							event.videoId = lib.status.videoId++;
+							var func = function (skills, id, target) {
+								var dialog = ui.create.dialog("forcebutton");
+								dialog.videoId = id;
+								dialog.add("令" + get.translation(target) + "获得一个技能");
+								for (var i = 0; i < skills.length; i++) {
+									dialog.add('<div class="popup pointerdiv" style="width:80%;display:inline-block"><div class="skill">【' + get.translation(skills[i]) + "】</div><div>" + lib.translate[skills[i] + "_info"] + "</div></div>");
+								}
+								dialog.addText(" <br> ");
+							};
+							if (player.isOnline()) player.send(func, list, event.videoId, target);
+							else if (player == game.me) func(list, event.videoId, target);
+							player.chooseControl(list).set("ai", function () {
+								var controls = _status.event.controls;
+								if (controls.includes("cslilu")) return "cslilu";
+								return controls[0];
+							});
+						}
+					} else event.goto(3);
+					"step 2";
+					game.broadcastAll("closeDialog", event.videoId);
+					target.addSkills(result.control);
+					"step 3";
+					var storage = player.storage.redunshi;
+					if (event.links.includes(1)) {
+						storage[0].remove(event.cardname);
+						storage[1]++;
+						player.markSkill("redunshi");
+					}
+					if (event.links.includes(2)) {
+						player.loseMaxHp();
+						if (storage[1] > 0) player.draw(storage[1]);
+					}
+				},
+			},
+		},
+	},
 	//吉本
 	xunli: {
 		audio: 2,
