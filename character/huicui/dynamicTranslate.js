@@ -17,6 +17,19 @@ const dynamicTranslates = {
 		str += "，然后当前回合角色于本回合内下一次造成伤害时，你选择两项：⒈防止此伤害。系统从技能名中包含“仁/义/礼/智/信”字样的技能中随机选择三个其未拥有的技能，然后你令当前回合角色获得其中一个技能。⒉从〖遁世〗中删除你本次使用或打出的牌并获得一个“席”。⒊减1点体力上限并摸X张牌（X为你的“席”数）。";
 		return str;
 	},
+	redunshi: function (player) {
+		var info = player.storage.dunshi;
+		var str = "每回合限一次。你可以视为使用或打出一张";
+		var list = ["sha", "shan", "tao", "jiu"];
+		for (var i of list) {
+			var strx = "【" + get.translation(i) + "】";
+			if (info && !info[0].includes(i)) strx = '<span style="text-decoration:line-through;">' + strx + "</span>";
+			str += strx;
+			if (i != "jiu") str += "/";
+		}
+		str += "，然后当前回合角色于本回合内下一次造成伤害时，你选择两项：⒈防止此伤害。系统从技能名中包含“仁/义/礼/智/信”字样的技能中随机选择三个其未拥有的技能，然后你令当前回合角色获得其中一个技能。⒉从〖遁世〗中删除你本次使用或打出的牌并获得一个“席”。⒊减1点体力上限并摸X张牌（X为你的“席”数）。";
+		return str;
+	},
 	dcporui: function (player) {
 		return "每轮限" + (player.hasMark("dcgonghu_basic") ? "两" : "一") + "次。其他角色的结束阶段，你可以弃置一张牌并选择另一名于此回合内失去过牌的其他角色，你视为对其依次使用X+1张【杀】" + (player.hasMark("dcgonghu_damage") ? "" : "，然后你交给其X张手牌") + "（X为其本回合失去的牌数且至多为5）。";
 	},
