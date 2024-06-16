@@ -66,6 +66,7 @@ const characters = {
 	dc_huangchengyan: ["male", "qun", 3, ["dcjiezhen", "dczecai", "dcyinshi"]],
 	dc_gaolan: ["male", "qun", 4, ["xizhen"]],
 	guanning: ["male", "qun", "3/7", ["dunshi"]],
+	shenguanning: ["male", "shen", "3/10", ["redunshi","cslilu","zaiqi"]],
 	dc_jiben: ["male", "qun", 3, ["xunli", "zhishi", "lieyi"]],
 	mamidi: ["male", "qun", "4/6", ["bingjie", "zhengding"]],
 	re_dengzhi: ["male", "shu", 3, ["jianliang", "weimeng"]],
