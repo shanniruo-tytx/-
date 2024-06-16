@@ -462,6 +462,7 @@ const translates = {
 	dc_guansuo: "新杀关索",
 	dc_guansuo_prefix: "新杀",
 	dc_zhaoxiang: "新杀赵襄",
+	shen_zhaoxiang: "神赵襄",
 	dc_zhaoxiang_prefix: "新杀",
 	dc_xujing: "许靖",
 	dcshangyu: "赏誉",
