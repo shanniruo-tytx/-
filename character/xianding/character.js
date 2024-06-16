@@ -21,6 +21,7 @@ const characters = {
 	wu_luxun: ["male", "wu", 3, ["dcxiongmu", "dczhangcai", "dcruxian"]],
 	dc_xujing: ["male", "shu", 3, ["dcshangyu", "dccaixia"]],
 	dc_zhaoxiang: ["female", "shu", 4, ["refanghun", "refuhan"]],
+	shen_zhaoxiang: ["female", "shen", 5, ["refanghun", "shenfuhan"]],
 	dc_guansuo: ["male", "shu", 4, ["xinzhengnan", "xiefang"]],
 	xin_baosanniang: ["female", "shu", 3, ["decadewuniang", "decadexushen"]],
 	dc_shixie: ["male", "qun", 3, ["rebiluan", "ollixia"]],
